@@ -23,6 +23,10 @@ This project has the following depencancies:
 Examples
 --------
 
+- List all users on the console using the specified server, port and credentials 
+```
+ADReportUsers -f TXT -h SERVER:389 -u MYLOGIN -p MYPASS
+```
 - Create Excel 2007 or higher .xlsx file with report containing all users
 ```
 ADReportUsers -f XLSX -o All.xlsx

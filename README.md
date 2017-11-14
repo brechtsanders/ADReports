@@ -24,9 +24,13 @@ Examples
 --------
 
 - Create HTML file with report containing all enabled users that have not logged in during the past 45 days
-	ADReportUsers /f HTML /o ADReportUsers_NotRecentlyLoggedIn.html /l -45 /e
+```
+ADReportUsers /f HTML /o ADReportUsers_NotRecentlyLoggedIn.html /l -45 /e
+```
 - Create XML file with report containing all users in the specified OU
-	ADReportUsers /f XML /o ADReportUsers_RecycleBin.html /b "OU=DeleteMe,OU=Company,DC=DOMAIN,DC=LOCAL"
+```
+ADReportUsers /f XML /o ADReportUsers_RecycleBin.html /b "OU=DeleteMe,OU=Company,DC=DOMAIN,DC=LOCAL"
+```
 
 License
 -------

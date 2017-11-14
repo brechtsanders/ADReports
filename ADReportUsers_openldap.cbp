@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ADReportUsers_openldap" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/ADReportUsers_openldap" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters='/f TXT /g &quot;CN=Domain Admins,CN=Users,DC=ISIS,DC=LOCAL&quot; /g &quot;CN=Enterprise Admins,CN=Users,DC=ISIS,DC=LOCAL&quot; /g &quot;CN=Schema Admins,CN=Users,DC=ISIS,DC=LOCAL&quot;' />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/ADReportUsers_openldap" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="/f xml /c 180" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug32">
+				<Option output="bin/Debug32/ADReportUsers_openldap" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug32/" />
+				<Option type="1" />
+				<Option compiler="mingw32" />
+				<Option parameters="/f TSV" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release32">
+				<Option output="bin/Release32/ADReportUsers_openldap" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release32/" />
+				<Option type="1" />
+				<Option compiler="mingw32" />
+				<Option parameters="/f TSV /l -180" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug64">
+				<Option output="bin/Debug64/ADReportUsers_openldap" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug64/" />
+				<Option type="1" />
+				<Option compiler="mingw64" />
+				<Option parameters="/h 127.0.0.1:389 /f TSV /e" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release64">
+				<Option output="bin/Release64/ADReportUsers_openldap" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release64/" />
+				<Option type="1" />
+				<Option compiler="mingw64" />
+				<Option parameters="/f TSV /l -180" />
+				<Compiler>
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-DUNICODE" />
+			<Add option="-DUSE_XLSXIO" />
+			<Add option="-DSTATIC" />
+		</Compiler>
+		<Linker>
+			<Add library="xlsxio_write" />
+			<Add library="zip" />
+			<Add library="ldap" />
+			<Add library="lber" />
+			<Add library="gnutls" />
+			<Add library="ws2_32" />
+		</Linker>
+		<Unit filename="ADReportUsers.cpp" />
+		<Unit filename="adformats.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="adformats.h" />
+		<Unit filename="dataoutput.cpp" />
+		<Unit filename="dataoutput.h" />
+		<Unit filename="ldapconnection.cpp" />
+		<Unit filename="ldapconnection.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="ADReportGroups.cbp" />
+		<Project filename="ADReportUsers.cbp" />
+		<Project filename="CheckUserFolders.cbp" />
+		<Project filename="ADReportComputers.cbp" />
+		<Project filename="ADGetPhoto.cbp" />
+		<Project filename="LocalGroup.cbp" />
+		<Project filename="_test_paged_ldap_.cbp" />
+		<Project filename="ADReportUsers_openldap.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

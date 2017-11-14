@@ -36,31 +36,47 @@ CPDIR = cp -rf
 CFLAGS += -DUSE_XLSXIO
 CXXFLAGS += -DUSE_XLSXIO
 LDFLAGS += -lxlsxio_write
-
-ADREPORTUSERS_OBJ = ADReportUsers.o ldapconnection.o adformats.o dataoutput.o
-ADREPORTUSERS_LDFLAGS = -lldap -llber
-ADREPORTGROUPS_OBJ = ADReportGroups.o ldapconnection.o adformats.o dataoutput.o
-ADREPORTGROUPS_LDFLAGS = -lldap -llber
-ADREPORTCOMPUTERS_OBJ = ADReportComputers.o ldapconnection.o adformats.o dataoutput.o
-ADREPORTCOMPUTERS_LDFLAGS = -lldap -llber
-CHECKUSERFOLDERS_OBJ = checkuserfolders.o ldapconnection.o adformats.o dataoutput.o
-CHECKUSERFOLDERS_LDFLAGS = -lldap -llber
-ifneq ($(OS),Windows_NT)
-SHARED_CFLAGS += -fPIC
+ifdef STATIC
+CFLAGS += -DSTATIC
+CXXFLAGS += -DSTATIC
+LDFLAGS += -static -lzip -lzip -lbz2 -lz
 endif
+
+LDAP_FLAGS := 
+LDAP_LIBS := -lldap -llber
 ifeq ($(OS),Windows_NT)
+ifdef USE_WINLDAP
+LDAP_FLAGS := -DUNICODE -DUSE_WINLDAP
+LDAP_LIBS := -lwldap32
+endif
+endif
+
+#ifneq ($(OS),Windows_NT)
+#SHARED_CFLAGS += -fPIC
+#endif
+#ifeq ($(OS),Windows_NT)
 #CFLAGS += -DUNICODE -DUSE_WINLDAP
 #CXXFLAGS += -DUNICODE -DUSE_WINLDAP
 #ADREPORTUSERS_SHARED_LDFLAGS += -Wl,--out-implib,$@$(LIBEXT)
-else ifeq ($(OS),Darwin)
-else
-endif
-ifeq ($(OS),Darwin)
-OS_LINK_FLAGS = -dynamiclib -o $@
-else
-OS_LINK_FLAGS = -shared -Wl,-soname,$@ $(STRIPFLAG)
-endif
+#else ifeq ($(OS),Darwin)
+#else
+#endif
+#ifeq ($(OS),Darwin)
+#OS_LINK_FLAGS = -dynamiclib -o $@
+#else
+#OS_LINK_FLAGS = -shared -Wl,-soname,$@ $(STRIPFLAG)
+#endif
 
+ADREPORTUSERS_OBJ = ADReportUsers.o ldapconnection.o adformats.o dataoutput.o
+ADREPORTUSERS_LDFLAGS = $(LDAP_LIBS)
+ADREPORTGROUPS_OBJ = ADReportGroups.o ldapconnection.o adformats.o dataoutput.o
+ADREPORTGROUPS_LDFLAGS = $(LDAP_LIBS)
+ADREPORTCOMPUTERS_OBJ = ADReportComputers.o ldapconnection.o adformats.o dataoutput.o
+ADREPORTCOMPUTERS_LDFLAGS = $(LDAP_LIBS)
+CHECKUSERFOLDERS_OBJ = checkuserfolders.o ldapconnection.o adformats.o dataoutput.o
+CHECKUSERFOLDERS_LDFLAGS = $(LDAP_LIBS)
+ADGETPHOTO_OBJ = ADGetPhoto.o ldapconnection.o adformats.o dataoutput.o
+ADGETPHOTO_LDFLAGS = $(LDAP_LIBS)
 
 #ifdef STATICDLL
 #ifeq ($(OS),Windows_NT)
@@ -70,10 +86,10 @@ endif
 #endif
 #endif
 
-TOOLS_BIN = ADReportUsers$(BINEXT) ADReportGroups$(BINEXT) ADReportComputers$(BINEXT) CheckUserFolders$(BINEXT)
+TOOLS_BIN = ADReportUsers$(BINEXT) ADReportGroups$(BINEXT) ADReportComputers$(BINEXT) CheckUserFolders$(BINEXT) ADGetPhoto$(BINEXT)
 
-#COMMON_PACKAGE_FILES = README.md LICENSE.txt Changelog.txt
-#SOURCE_PACKAGE_FILES = $(COMMON_PACKAGE_FILES) Makefile CMakeLists.txt CMake/ doc/Doxyfile include/*.h lib/*.c lib/*.h src/*.c examples/*.c build/*.cbp
+COMMON_PACKAGE_FILES = README.md COPYING.txt Changelog.txt
+SOURCE_PACKAGE_FILES = $(COMMON_PACKAGE_FILES) Makefile *.c *.cpp *.h
 
 default: all
 
@@ -94,18 +110,23 @@ all: tools
 tools: $(TOOLS_BIN)
 
 ADReportUsers$(BINEXT): $(ADREPORTUSERS_OBJ)
-	$(CXX) -o $@ $(ADREPORTUSERS_OBJ) $(ADREPORTUSERS_LDFLAGS) $(LDFLAGS)
+	$(CXX) $(STRIPFLAG) -o $@ $(ADREPORTUSERS_OBJ) $(ADREPORTUSERS_LDFLAGS) $(LDFLAGS)
 
 ADReportGroups$(BINEXT): $(ADREPORTGROUPS_OBJ)
-	$(CXX) -o $@ $(ADREPORTGROUPS_OBJ) $(ADREPORTGROUPS_LDFLAGS) $(LDFLAGS)
+	$(CXX) $(STRIPFLAG) -o $@ $(ADREPORTGROUPS_OBJ) $(ADREPORTGROUPS_LDFLAGS) $(LDFLAGS)
 
 ADReportComputers$(BINEXT): $(ADREPORTCOMPUTERS_OBJ)
-	$(CXX) -o $@ $(ADREPORTCOMPUTERS_OBJ) $(ADREPORTCOMPUTERS_LDFLAGS) $(LDFLAGS)
+	$(CXX) $(STRIPFLAG) -o $@ $(ADREPORTCOMPUTERS_OBJ) $(ADREPORTCOMPUTERS_LDFLAGS) $(LDFLAGS)
 
 CheckUserFolders$(BINEXT): $(CHECKUSERFOLDERS_OBJ)
-	$(CXX) -o $@ $(CHECKUSERFOLDERS_OBJ) $(CHECKUSERFOLDERS_LDFLAGS) $(LDFLAGS)
+	$(CXX) $(STRIPFLAG) -o $@ $(CHECKUSERFOLDERS_OBJ) $(CHECKUSERFOLDERS_LDFLAGS) $(LDFLAGS)
 
-#install: all doc
+ADGetPhoto$(BINEXT): $(ADGETPHOTO_OBJ)
+	$(CXX) $(STRIPFLAG) -o $@ $(ADGETPHOTO_OBJ) $(ADGETPHOTO_LDFLAGS) $(LDFLAGS)
+
+install: all
+	$(MKDIR) $(PREFIX)/bin
+	$(CP) $(TOOLS_BIN) $(PREFIX)/bin/
 #	$(MKDIR) $(PREFIX)/include $(PREFIX)/lib $(PREFIX)/bin
 #	$(CP) include/*.h $(PREFIX)/include/
 #	$(CP) *$(LIBEXT) $(PREFIX)/lib/
@@ -119,21 +140,23 @@ CheckUserFolders$(BINEXT): $(CHECKUSERFOLDERS_OBJ)
 #	$(CPDIR) doc/man $(PREFIX)/
 #endif
 
-#.PHONY: version
-#version:
-#	sed -ne "s/^#define\s*XLSXIO_VERSION_[A-Z]*\s*\([0-9]*\)\s*$$/\1./p" include/xlsxio_version.h | tr -d "\n" | sed -e "s/\.$$//" > version
+.PHONY: version
+version:
+	sed -ne "s/^#define\s*ADREPORTS_VERSION_[A-Z]*\s*\([0-9]*\)\s*$$/\1./p" adreports_version.h | tr -d "\n" | sed -e "s/\.$$//" > version
 
-#.PHONY: package
-#package: version
-#	tar cfJ xlsxio-$(shell cat version).tar.xz --transform="s?^?xlsxio-$(shell cat version)/?" $(SOURCE_PACKAGE_FILES)
+.PHONY: package
+package: version
+	tar cfJ adreports-$(shell cat version).tar.xz --transform="s?^?adreports-$(shell cat version)/?" $(SOURCE_PACKAGE_FILES)
 
-#.PHONY: package
-#binarypackage: version
-#	$(MAKE) PREFIX=binarypackage_temp install STATICDLL=1
-#	tar cfJ "xlsxio-$(shell cat version)-$(OS).tar.xz" --transform="s?^binarypackage_temp/??" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
-#	rm -rf binarypackage_temp
+.PHONY: package
+binarypackage: version
+	#$(MAKE) PREFIX=binarypackage_temp install USE_WINLDAP=1 STATIC=1
+	#tar cfJ "adreports-$(shell cat version)-$(OS).tar.xz" --transform="s?^binarypackage_temp/??" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
+	$(MAKE) PREFIX=binarypackage_temp install USE_WINLDAP=1 STATIC=1
+	zip -9 -r -j "adreports-$(shell cat version)-$(OS).zip" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
+	rm -rf binarypackage_temp
 
 .PHONY: clean
 clean:
-	$(RM) *.o *.exe
+	$(RM) version *.o $(TOOLS_BIN)
 

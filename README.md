@@ -32,6 +32,11 @@ ADReportUsers /f HTML /o ADReportUsers_NotRecentlyLoggedIn.html /l -45 /e
 ADReportUsers /f XML /o ADReportUsers_RecycleBin.html /b "OU=DeleteMe,OU=Company,DC=DOMAIN,DC=LOCAL"
 ```
 
+- Create TSV (Tab Seperated Values) file with report containing enabled all users that have "password never expires" enabled
+```
+ADReportUsers /f TSV /o ADReportUsers_AccountNeverExpires.html /e /q "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536))"
+```
+
 License
 -------
 XLSX I/O is released under the terms of the GNU General Public License, see COPYING.txt.

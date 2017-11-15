@@ -77,4 +77,4 @@ ADReportUsers -f TSV -o AccountNeverExpires.txt -e -q "(&(objectCategory=person)
 
 License
 -------
-XLSX I/O is released under the terms of the GNU General Public License, see COPYING.txt.
+ADReports is released under the terms of the GNU General Public License, see COPYING.txt.

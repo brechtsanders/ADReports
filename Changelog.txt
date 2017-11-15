@@ -1,3 +1,9 @@
+2017-11-14 - version 1.4.2
+ - added CheckUserFolders (to get home folder information from a directory)
+ - added adreports_version.h and version information in command line help
+ - changed parameters to use - instead of / in the help (both are still supported)
+ - minor changes to Makefile
+
 2017-11-14 - version 1.4.1
  - added Makefile
 

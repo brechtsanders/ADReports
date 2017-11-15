@@ -7,6 +7,9 @@
 #endif
 
 #ifdef __MINGW32__
+#ifndef __MINGW64_VERSION_MAJOR
+#define strcasecmp stricmp
+#endif
 #define PRINTF_INT64_MODIFIER "I64"
 #else
 #define PRINTF_INT64_MODIFIER "ll"

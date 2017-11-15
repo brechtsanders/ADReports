@@ -11,15 +11,15 @@
 #endif
 #endif
 
-#define LDAP_COMMAND_LINE_PARAMETERS "[/h host[:port]] [/u user /p password] [/b searchbase] [/l user]"
+#define LDAP_COMMAND_LINE_PARAMETERS "[-h host[:port]] [-u user -p password] [-b searchbase] [-l user]"
 #define LDAP_COMMAND_LINE_HELP \
-    "  /h host[:port] \tLDAP host (and optionally port) to connect to (default\n" \
+    "  -h host[:port] \tLDAP host (and optionally port) to connect to (default\n" \
     "                 \tis the default Active Directory LDAP server)\n" \
-    "  /u user        \tLDAP authentication user login (default is to\n" \
+    "  -u user        \tLDAP authentication user login (default is to\n" \
     "                 \tauthenticate as the currently logged on domain user)\n" \
-    "  /p password    \tLDAP authentication password (default is to\n" \
+    "  -p password    \tLDAP authentication password (default is to\n" \
     "                 \tauthenticate as the currently logged on domain user)\n" \
-    "  /b searchbase  \tLDAP search base (default is current domain's default\n" \
+    "  -b searchbase  \tLDAP search base (default is current domain's default\n" \
     "                 \tnaming context)\n"
 
 char* get_current_login ();

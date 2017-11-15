@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <ctype.h>
+#ifdef _WIN32
 #include <windows.h>
 #include <lmaccess.h>
+#endif
 #include <string>
 #include <vector>
+#include "adreports_version.h"
 #include "ldapconnection.h"
 #include "dataoutput.h"
 #include "adformats.h"
@@ -11,12 +14,13 @@
 void show_help()
 {
   printf(
-    "Usage:  ADReportUsers " LDAP_COMMAND_LINE_PARAMETERS " [/l login]\n" \
+    "ADGetPhoto v" ADREPORTS_VERSION_STRING " - extract Active Directory photos\n" \
+    "Usage:  ADGetPhoto " LDAP_COMMAND_LINE_PARAMETERS " [-l login]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \
-    "  /c             \tExtract photo of current user (default = all users)\n" \
-    "  /l login       \tLogin name of user to extract photo of\n" \
-    "  /q ldapfilter  \tLDAP filter\n" \
+    "  -c             \tExtract photo of current user (default = all users)\n" \
+    "  -l login       \tLogin name of user to extract photo of\n" \
+    "  -q ldapfilter  \tLDAP filter\n" \
     "\n"
   );
 }

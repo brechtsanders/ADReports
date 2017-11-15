@@ -9,6 +9,7 @@
 #endif
 #include <string>
 #include <vector>
+#include "adreports_version.h"
 #include "ldapconnection.h"
 #include "dataoutput.h"
 #include "adformats.h"
@@ -16,19 +17,20 @@
 void show_help()
 {
   printf(
-    "Usage:  ADReportGroups " LDAP_COMMAND_LINE_PARAMETERS " [/f format] [/o file] [/g group] [/c days] [/l days] [/e] [/d] [/q ldapfilter]\n" \
+    "ADReportComputers v" ADREPORTS_VERSION_STRING " - generate Active Directory computer reports\n" \
+    "Usage:  ADReportComputers " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-g group] [-c days] [-l days] [-e] [-d] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \
-    "  /f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
-    "  /o file        \tOutput file (default is standard output)\n" \
-    "  /g group       \tInclude all members of this group (may be specified\n" \
+    "  -f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
+    "  -o file        \tOutput file (default is standard output)\n" \
+    "  -g group       \tInclude all members of this group (may be specified\n" \
     "                 \tmultiple times, default is all computers)\n" \
-    "  /c days        \tShow only computers created in the last number of days\n" \
-    "  /l days        \tShow only computers logged on in the last number of days\n" \
+    "  -c days        \tShow only computers created in the last number of days\n" \
+    "  -l days        \tShow only computers logged on in the last number of days\n" \
     "                 \t(not logged on if negative)\n" \
-    "  /e             \tShow only enabled computers\n" \
-    "  /d             \tShow only disabled computers\n" \
-    "  /q ldapfilter  \tLDAP filter\n" \
+    "  -e             \tShow only enabled computers\n" \
+    "  -d             \tShow only disabled computers\n" \
+    "  -q ldapfilter  \tLDAP filter\n" \
     "\n"
   );
 }

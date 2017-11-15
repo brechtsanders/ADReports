@@ -87,11 +87,11 @@ long long time2timevalue_n (time_t timestamp)
 const char* time2timevalue (time_t timestamp)
 {
   static char buf[32];
-#ifdef _WIN32
-  lltoa(time2timevalue_n(timestamp), buf, 10);
-#else
+//#ifdef _WIN32
+//  lltoa(time2timevalue_n(timestamp), buf, 10);
+//#else
   snprintf(buf, sizeof(buf), "%" PRINTF_INT64_MODIFIER "i", time2timevalue_n(timestamp));
-#endif
+//#endif
   return buf;
 }
 

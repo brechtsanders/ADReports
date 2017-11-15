@@ -7,6 +7,7 @@
 #endif
 #include <string>
 #include <vector>
+#include "adreports_version.h"
 #include "ldapconnection.h"
 #include "dataoutput.h"
 #include "adformats.h"
@@ -14,17 +15,18 @@
 void show_help()
 {
   printf(
-    "Usage:  ADReportGroups " LDAP_COMMAND_LINE_PARAMETERS " [/f format] [/o file] [/l user] [/s] [/c days] [/q ldapfilter]\n" \
+    "ADReportGroups v" ADREPORTS_VERSION_STRING " - generate Active Directory group reports\n" \
+    "Usage:  ADReportGroups " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-l user] [-s] [-c days] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \
-    "  /f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
-    "  /o file        \tOutput file (default is standard output)\n" \
-    "  /l user        \tInclude all groups this user is a member of (may be\n" \
+    "  -f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
+    "  -o file        \tOutput file (default is standard output)\n" \
+    "  -l user        \tInclude all groups this user is a member of (may be\n" \
     "                 \tspecified multiple times, default is all groups)\n" \
-    "  /s             \tSecurity groups only\n" \
-    "  /d             \tDistribution groups only\n" \
-    "  /c days        \tShow only groups created in the last number of days\n" \
-    "  /q ldapfilter  \tLDAP filter\n" \
+    "  -s             \tSecurity groups only\n" \
+    "  -d             \tDistribution groups only\n" \
+    "  -c days        \tShow only groups created in the last number of days\n" \
+    "  -q ldapfilter  \tLDAP filter\n" \
     "\n"
   );
 }

@@ -10,6 +10,7 @@
 #endif
 #include <string>
 #include <vector>
+#include "adreports_version.h"
 #include "ldapconnection.h"
 #include "dataoutput.h"
 #include "adformats.h"
@@ -17,24 +18,25 @@
 void show_help()
 {
   printf(
-    "Usage:  ADReportUsers " LDAP_COMMAND_LINE_PARAMETERS " [/f format] [/o file] [/g group] [/c days] [/x days] [/l days] [/n days] [/e] [/d] [/t] [/q ldapfilter]\n" \
+    "ADReportGroups v" ADREPORTS_VERSION_STRING " - generate Active Directory user reports\n" \
+    "Usage:  ADReportUsers " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-g group] [-c days] [-x days] [-l days] [-n days] [-e] [-d] [-t] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \
-    "  /f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
-    "  /o file        \tOutput file (default is standard output)\n" \
-    "  /g group       \tInclude all members of this group (may be specified\n" \
+    "  -f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
+    "  -o file        \tOutput file (default is standard output)\n" \
+    "  -g group       \tInclude all members of this group (may be specified\n" \
     "                 \tmultiple times, default is all users)\n" \
-    "  /c days        \tShow only users created in the last number of days\n" \
-    "  /x days        \tShow only users expiring in the next number of days\n" \
+    "  -c days        \tShow only users created in the last number of days\n" \
+    "  -x days        \tShow only users expiring in the next number of days\n" \
     "                 \t(may be negative to specify a date in the past)\n" \
-    "  /l days        \tShow only users logged on in the last number of days\n" \
+    "  -l days        \tShow only users logged on in the last number of days\n" \
     "                 \t(not logged on if negative)\n" \
-    "  /n days        \tShow only users that have changed their password in\n" \
+    "  -n days        \tShow only users that have changed their password in\n" \
     "                 \tthe last number of days (or not if negative)\n" \
-    "  /e             \tShow only enabled users\n" \
-    "  /d             \tShow only disabled users\n" \
-    "  /t             \tInclude trust accounts\n" \
-    "  /q ldapfilter  \tAdditional LDAP filter\n" \
+    "  -e             \tShow only enabled users\n" \
+    "  -d             \tShow only disabled users\n" \
+    "  -t             \tInclude trust accounts\n" \
+    "  -q ldapfilter  \tAdditional LDAP filter\n" \
     "\n"
   );
 }

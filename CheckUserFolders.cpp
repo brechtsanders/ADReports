@@ -4,10 +4,16 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _WIN32
 #include <windows.h>
 #include <lmaccess.h>
+#else
+#define UF_ACCOUNTDISABLE 2
+#define UF_LOCKOUT 16
+#endif
 #include <string>
 #include <vector>
+#include "adreports_version.h"
 #include "ldapconnection.h"
 #include "dataoutput.h"
 #include "adformats.h"
@@ -21,12 +27,13 @@
 void show_help()
 {
   printf(
-    "Usage:  CheckUserFolders " LDAP_COMMAND_LINE_PARAMETERS " [/f format] [/o file] [/q ldapfilter] path ...\n" \
+    "CheckUserFolders v" ADREPORTS_VERSION_STRING " - generate Active Directory home folder reports\n" \
+    "Usage:  CheckUserFolders " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-q ldapfilter] path ...\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \
-    "  /f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
-    "  /o file        \tOutput file (default is standard output)\n" \
-    "  /q ldapfilter  \tLDAP filter\n" \
+    "  -f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
+    "  -o file        \tOutput file (default is standard output)\n" \
+    "  -q ldapfilter  \tLDAP filter\n" \
     "  path           \tOne or more directories to scan\n" \
     "\n"
   );
@@ -162,7 +169,7 @@ int main (int argc, char *argv[])
                   dst->AddData(activedata);
                   dst->AddData(format_time(expiration));
                   dst->AddData(format_timevalue(result->GetAttributeInt("lastLogonTimestamp")));
-                  dst->AddData(result->GetAttributeInt("logonCount"));
+                  dst->AddData((int64_t)result->GetAttributeInt("logonCount"));
                   dst->AddData(s = result->GetAttribute("homeDirectory"));
                   free(s);
                   dst->AddData((s = result->GetDN()));

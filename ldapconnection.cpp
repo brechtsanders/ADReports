@@ -123,6 +123,9 @@ bool LDAPConnection::ProcessCommandLineParameter (int argc, char** argv, int& in
 {
   const char* param;
   param = NULL;
+  if (!argv[index][0] || (argv[index][0] != '/' && argv[index][0] != '-')) {
+    return false;
+  }
   switch (tolower(argv[index][1])) {
     case 'h' :
       if (argv[index][2])

@@ -5,7 +5,13 @@ Generate reports from Active Directory (AD).
 Description
 -----------
 ADReports provides tools to generate reports from Active Directory (AD) via LDAP.
-These reports are useful to manage Active Directory, but also to improve compliancy for audits (e.g. due diligence, Sarbanes–Oxley Act (SOX)).
+These can help you manage Active Directory by running certain reports (on a regular basis). This can be useful for:
+- providing populations and/or evidence during audits (e.g. Due Diligence, Sarbanes–Oxley Act (SOX))
+- implementing procedures to improve compliancy (e.g. General Computer Controls (GCC), Sarbanes–Oxley Act (SOX))
+- cleanup actions (e.g. old or unused user accounts)
+- inventory checks (e.g. find out which computers no longer log on)
+- exporting data (e.g. getting a list of all users and using Excel to filter on certain fields)
+- determining if home folders on a file server no longer belong to an active user
 
 Goal
 ----

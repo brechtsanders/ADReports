@@ -33,6 +33,7 @@ RMDIR = rm -rf
 CP = cp -f
 CPDIR = cp -rf
 
+ifdef USE_XLSXIO
 CFLAGS += -DUSE_XLSXIO
 CXXFLAGS += -DUSE_XLSXIO
 LDFLAGS += -lxlsxio_write
@@ -40,6 +41,7 @@ ifdef STATIC
 CFLAGS += -DSTATIC
 CXXFLAGS += -DSTATIC
 LDFLAGS += -static -lzip -lzip -lbz2 -lz
+endif
 endif
 
 LDAP_FLAGS := 
@@ -150,7 +152,7 @@ package: version
 
 .PHONY: package
 binarypackage: version
-	#$(MAKE) PREFIX=binarypackage_temp install USE_WINLDAP=1 STATIC=1
+	#$(MAKE) PREFIX=binarypackage_temp install USE_XLSXIO=1 USE_WINLDAP=1 STATIC=1
 	#tar cfJ "adreports-$(shell cat version)-$(OS).tar.xz" --transform="s?^binarypackage_temp/??" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
 	$(MAKE) PREFIX=binarypackage_temp install USE_WINLDAP=1 STATIC=1
 	zip -9 -r -j "adreports-$(shell cat version)-$(OS).zip" $(COMMON_PACKAGE_FILES) binarypackage_temp/*

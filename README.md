@@ -20,6 +20,21 @@ This project has the following depencancies:
 - [XLSX I/O](https://brechtsanders.github.io/xlsxio/) (optional)
 - [OpenLDAP](http://www.openldap.org/software/download/) (optional on Windows)
 
+Building from source
+--------------------
+
+First make sure you have the dependancies installed.
+To compile with .xlsx output support run:
+```
+make USE_XLSXIO=1
+```
+When building on Windows using MinGW and MSYS add USE_WINLDAP=1 to use native Windows LDAP support instead of OpenLDAP.
+To install to a specified folder run:
+```
+make install PREFIX=/usr/local
+```
+If you are using Windows then you can download one of the binary versions (either 32-bit or 64-bit).
+
 Examples
 --------
 

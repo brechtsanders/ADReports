@@ -70,7 +70,7 @@ ADReportUsers -f HTML -o NotRecentlyLoggedIn.html -l -45 -e
 ```
 ADReportUsers -f XML -o DeleteMe.xml -b "OU=DeleteMe,OU=Company,DC=DOMAIN,DC=LOCAL"
 ```
-- Create TSV (Tab Seperated Values) file with report containing enabled all users that have "password never expires" enabled:
+- Create TSV (Tab Seperated Values) file with report containing enabled all users that have "password never expires" enabled using a custom LDAP query:
 ```
 ADReportUsers -f TSV -o AccountNeverExpires.txt -e -q "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536))"
 ```

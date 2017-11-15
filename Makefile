@@ -33,14 +33,18 @@ RMDIR = rm -rf
 CP = cp -f
 CPDIR = cp -rf
 
+ifdef STATIC
+CFLAGS += -DSTATIC
+CXXFLAGS += -DSTATIC
+LDFLAGS += -static
+endif
+
 ifdef USE_XLSXIO
 CFLAGS += -DUSE_XLSXIO
 CXXFLAGS += -DUSE_XLSXIO
 LDFLAGS += -lxlsxio_write
 ifdef STATIC
-CFLAGS += -DSTATIC
-CXXFLAGS += -DSTATIC
-LDFLAGS += -static -lzip -lzip -lbz2 -lz
+LDFLAGS += -lzip -lzip -lbz2 -lz
 endif
 endif
 

@@ -6,18 +6,19 @@ Description
 -----------
 ADReports provides tools to generate reports from Active Directory (AD) via LDAP.
 These can help you manage Active Directory by running certain reports (on a regular basis). This can be useful for:
+- exporting data (e.g. getting a list of all users and using Excel to filter on certain fields)
 - providing populations and/or evidence during audits (e.g. Due Diligence, Sarbanes–Oxley Act (SOX))
-- implementing procedures to improve compliancy (e.g. General Computer Controls (GCC), Sarbanes–Oxley Act (SOX))
 - cleanup actions (e.g. old or unused user accounts)
 - inventory checks (e.g. find out which computers no longer log on)
-- exporting data (e.g. getting a list of all users and using Excel to filter on certain fields)
+- implementing procedures to improve compliancy (e.g. General Computer Controls (GCC), Sarbanes–Oxley Act (SOX))
 - determining if home folders on a file server no longer belong to an active user
+- getting information before problems occur (e.g. determine which user accounts are about to expire)
 
 Goal
 ----
 The library was written with the following goals in mind:
-- portable across different platforms (Windows, *nix)
-- cross platform (using either native Windows LDAP or OpenLDAP)
+- generate reports in different formats
+- portable across platforms (using either native Windows LDAP or OpenLDAP)
 - command line to allow easy scheduling of reports
 
 Dependancies

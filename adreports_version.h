@@ -10,7 +10,7 @@
 /*! \brief minor version number */
 #define ADREPORTS_VERSION_MINOR 4
 /*! \brief micro version number */
-#define ADREPORTS_VERSION_MICRO 2
+#define ADREPORTS_VERSION_MICRO 3
 /*! @} */
 
 /*! \cond PRIVATE */

@@ -102,16 +102,16 @@ default: all
 all: tools
 
 %.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(LDAP_FLAGS)
 
 %.o: %.cpp
-	$(CXX) -c -o $@ $< $(CXXFLAGS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(LDAP_FLAGS)
 
 %.static.o: %.c
-	$(CC) -c -o $@ $< $(STATIC_CFLAGS) $(CFLAGS)
+	$(CC) -c -o $@ $< $(STATIC_CFLAGS) $(CFLAGS) $(LDAP_FLAGS)
 
 %.shared.o: %.c
-	$(CC) -c -o $@ $< $(SHARED_CFLAGS) $(CFLAGS)
+	$(CC) -c -o $@ $< $(SHARED_CFLAGS) $(CFLAGS) $(LDAP_FLAGS)
 
 tools: $(TOOLS_BIN)
 
@@ -158,7 +158,7 @@ package: version
 binarypackage: version
 	#$(MAKE) PREFIX=binarypackage_temp install USE_XLSXIO=1 USE_WINLDAP=1 STATIC=1
 	#tar cfJ "adreports-$(shell cat version)-$(OS).tar.xz" --transform="s?^binarypackage_temp/??" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
-	$(MAKE) PREFIX=binarypackage_temp install USE_WINLDAP=1 STATIC=1
+	$(MAKE) PREFIX=binarypackage_temp install USE_XLSXIO=1 USE_WINLDAP=1 STATIC=1
 	zip -9 -r -j "adreports-$(shell cat version)-$(OS).zip" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
 	rm -rf binarypackage_temp
 

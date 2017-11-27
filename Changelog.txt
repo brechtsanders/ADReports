@@ -1,3 +1,6 @@
+2017-11-14 - version 1.4.3
+ - minor changes to Makefile (Windows binary packages now support .xlsx file output)
+
 2017-11-14 - version 1.4.2
  - added CheckUserFolders (to get home folder information from a directory)
  - added adreports_version.h and version information in command line help

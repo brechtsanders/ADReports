@@ -85,7 +85,7 @@
 		</Compiler>
 		<Linker>
 			<Add library="xlsxio_write" />
-			<Add library="zip" />
+			<Add library="minizip" />
 			<Add library="ldap" />
 			<Add library="lber" />
 			<Add library="gnutls" />

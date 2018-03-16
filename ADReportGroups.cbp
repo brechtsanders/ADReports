@@ -89,8 +89,7 @@
 			<Add option="-static" />
 			<Add library="wldap32" />
 			<Add library="xlsxio_write" />
-			<Add library="zip" />
-			<Add library="bz2" />
+			<Add library="minizip" />
 			<Add library="z" />
 		</Linker>
 		<Unit filename="ADReportGroups.cpp" />

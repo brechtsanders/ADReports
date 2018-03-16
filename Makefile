@@ -44,7 +44,8 @@ CFLAGS += -DUSE_XLSXIO
 CXXFLAGS += -DUSE_XLSXIO
 LDFLAGS += -lxlsxio_write
 ifdef STATIC
-LDFLAGS += -lzip -lzip -lbz2 -lz
+#LDFLAGS += -lzip -lbz2 -lz -lcrypto
+LDFLAGS += -lminizip -lz
 endif
 endif
 

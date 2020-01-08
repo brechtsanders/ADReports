@@ -1,3 +1,7 @@
+2020-01-08 - version 1.4.5
+ - added -s option to use secure LDAP connection
+ - changed ADReportGroups parameter to list security groups only from -s to -g
+
 2018-03-15 - version 1.4.4
  - changes to build with XLSX I/O v0.2.12 which uses minizip instead of libzip
 

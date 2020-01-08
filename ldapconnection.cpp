@@ -106,7 +106,7 @@ char* get_current_login ()
 }
 
 LDAPConnection::LDAPConnection ()
-: ldaphost (NULL), ldapuser(NULL), ldappass(NULL), ldapsearchbase(NULL), ldapconnection(NULL)/*, ldapresponse(NULL)*/
+: ldaphost (NULL), ldapsecure(0), ldapuser(NULL), ldappass(NULL), ldapsearchbase(NULL), ldapconnection(NULL)/*, ldapresponse(NULL)*/
 {
 }
 
@@ -135,6 +135,9 @@ bool LDAPConnection::ProcessCommandLineParameter (int argc, char** argv, int& in
       if (!param)
         return false;
       ldaphost = strdup(param);
+      return true;
+    case 's' :
+      ldapsecure = 1;
       return true;
     case 'u' :
       if (argv[index][2])
@@ -172,12 +175,17 @@ const char* LDAPConnection::Open ()
 {
   LDAPRESULTTYPE msgid;
   //connect to default LDAP server
-  if ((ldapconnection = WINAPIASCII(ldap_init)(ldaphost, 0)) == NULL)
+  if (!ldapsecure)
+    ldapconnection = WINAPIASCII(ldap_init)(ldaphost, 0);
+  else
+    ldapconnection = WINAPIASCII(ldap_sslinit)(ldaphost, LDAP_SSL_PORT, 1);
+  if (ldapconnection == NULL)
     return "Error opening LDAP connection";
   //set options on connection blocks to specify LDAP version 3
   //ldapconnection->ld_lberoptions = 0;
   LDAPRESULTTYPE version = LDAP_VERSION3;
   ldap_set_option(ldapconnection, LDAP_OPT_PROTOCOL_VERSION, &version);
+  //ldap_set_option(ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON);
   //bind using specified or current credentials
   if (ldapuser || ldappass)
     msgid = WINAPIASCII(ldap_simple_bind_s)(ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : "")); //to do: replace with ldap_sasl_bind_s

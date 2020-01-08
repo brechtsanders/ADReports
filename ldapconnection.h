@@ -15,6 +15,7 @@
 #define LDAP_COMMAND_LINE_HELP \
     "  -h host[:port] \tLDAP host (and optionally port) to connect to (default\n" \
     "                 \tis the default Active Directory LDAP server)\n" \
+    "  -S             \tUse SSL encryption for the LDAP communication\n" \
     "  -u user        \tLDAP authentication user login (default is to\n" \
     "                 \tauthenticate as the currently logged on domain user)\n" \
     "  -p password    \tLDAP authentication password (default is to\n" \
@@ -29,6 +30,7 @@ class LDAPConnection
  protected:
   friend class LDAPResponse;
   char* ldaphost;
+  int ldapsecure;
   char* ldapuser;
   char* ldappass;
   char* ldapsearchbase;

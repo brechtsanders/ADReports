@@ -16,14 +16,14 @@ void show_help()
 {
   printf(
     "ADReportGroups v" ADREPORTS_VERSION_STRING " - generate Active Directory group reports\n" \
-    "Usage:  ADReportGroups " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-l user] [-s] [-c days] [-q ldapfilter]\n" \
+    "Usage:  ADReportGroups " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-l user] [-g] [-d] [-c days] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \
     "  -f format      \tOutput format (" DATAOUTPUT_FORMAT_HELP_LIST ")\n" \
     "  -o file        \tOutput file (default is standard output)\n" \
     "  -l user        \tInclude all groups this user is a member of (may be\n" \
     "                 \tspecified multiple times, default is all groups)\n" \
-    "  -s             \tSecurity groups only\n" \
+    "  -g             \tSecurity groups only\n" \
     "  -d             \tDistribution groups only\n" \
     "  -c days        \tShow only groups created in the last number of days\n" \
     "  -q ldapfilter  \tLDAP filter\n" \
@@ -86,7 +86,7 @@ int main (int argc, char *argv[])
               return false;
             users.push_back(param);
             break;
-          case 's' :
+          case 'g' :
             securitygroupsonly = true;
             break;
           case 'd' :

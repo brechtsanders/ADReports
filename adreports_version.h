@@ -21,4 +21,7 @@
 /*! \brief string with dotted version number \hideinitializer */
 #define ADREPORTS_VERSION_STRING ADREPORTS_VERSION_STRINGIZE(ADREPORTS_VERSION_MAJOR, ADREPORTS_VERSION_MINOR, ADREPORTS_VERSION_MICRO)
 
+/*! \brief string with information about author \hideinitializer */
+#define ADREPORTS_CREDITS "Brecht Sanders 2011-2020"
+
 #endif

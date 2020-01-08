@@ -15,6 +15,7 @@ void show_help()
 {
   printf(
     "ADGetPhoto v" ADREPORTS_VERSION_STRING " - extract Active Directory photos\n" \
+    "Credits: " ADREPORTS_CREDITS "\n" \
     "Usage:  ADGetPhoto " LDAP_COMMAND_LINE_PARAMETERS " [-c] [-l login] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \

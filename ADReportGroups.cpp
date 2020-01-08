@@ -16,6 +16,7 @@ void show_help()
 {
   printf(
     "ADReportGroups v" ADREPORTS_VERSION_STRING " - generate Active Directory group reports\n" \
+    "Credits: " ADREPORTS_CREDITS "\n" \
     "Usage:  ADReportGroups " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-l user] [-g] [-d] [-c days] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \

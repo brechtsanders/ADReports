@@ -28,6 +28,7 @@ void show_help()
 {
   printf(
     "CheckUserFolders v" ADREPORTS_VERSION_STRING " - generate Active Directory home folder reports\n" \
+    "Credits: " ADREPORTS_CREDITS "\n" \
     "Usage:  CheckUserFolders " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-q ldapfilter] path ...\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \

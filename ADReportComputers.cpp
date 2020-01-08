@@ -18,6 +18,7 @@ void show_help()
 {
   printf(
     "ADReportComputers v" ADREPORTS_VERSION_STRING " - generate Active Directory computer reports\n" \
+    "Credits: " ADREPORTS_CREDITS "\n" \
     "Usage:  ADReportComputers " LDAP_COMMAND_LINE_PARAMETERS " [-f format] [-o file] [-g group] [-c days] [-l days] [-e] [-d] [-q ldapfilter]\n" \
     "Parameters:\n" \
     LDAP_COMMAND_LINE_HELP \

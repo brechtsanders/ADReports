@@ -83,7 +83,11 @@ int main (int argc, char *argv[])
   }
 
   //do LDAP stuff
-  ldap->Open();
+  const char* ldaperrmsg;
+  if ((ldaperrmsg  = ldap->Open()) != NULL) {
+    fprintf(stderr, "Error opening LDAP connection: %s\n", ldaperrmsg);
+    return 2;
+  }
   std::string searchfilter = "(&(objectCategory=person)(objectClass=user)";
   if (login.size() > 0) {
     searchfilter += "(sAMAccountName=";

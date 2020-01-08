@@ -137,7 +137,11 @@ int main (int argc, char *argv[])
   }
 
   //do LDAP stuff
-  ldap->Open();
+  const char* ldaperrmsg;
+  if ((ldaperrmsg  = ldap->Open()) != NULL) {
+    fprintf(stderr, "Error opening LDAP connection: %s\n", ldaperrmsg);
+    return 2;
+  }
   std::string searchfilter = "(&(objectCategory=group)(objectClass=group)";
   if (securitygroupsonly) {
     searchfilter += "(groupType:1.2.840.113556.1.4.803:=2147483648)"; //LDAP_MATCHING_RULE_BIT_AND, ADS_GROUP_TYPE_SECURITY_ENABLED (0x80000000)

@@ -34,7 +34,7 @@
 				<Option object_output="obj/Debug32/" />
 				<Option type="1" />
 				<Option compiler="mingw32" />
-				<Option parameters="/f TSV" />
+				<Option parameters="/f TSV /S" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -100,10 +100,6 @@
 		<Unit filename="dataoutput.h" />
 		<Unit filename="ldapconnection.cpp" />
 		<Unit filename="ldapconnection.h" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

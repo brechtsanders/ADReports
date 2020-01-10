@@ -175,17 +175,81 @@ const char* LDAPConnection::Open ()
 {
   LDAPRESULTTYPE msgid;
   //connect to default LDAP server
-  if (!ldapsecure)
-    ldapconnection = WINAPIASCII(ldap_init)(ldaphost, 0);
-  else
+  if (!ldapsecure) {
+    ldapconnection = WINAPIASCII(ldap_init)(ldaphost, LDAP_PORT);
+  } else {
+#ifdef USE_WINLDAP
     ldapconnection = WINAPIASCII(ldap_sslinit)(ldaphost, LDAP_SSL_PORT, 1);
+#else
+    //ldapconnection = WINAPIASCII(ldap_sslinit)(ldaphost, LDAPS_PORT, 1);
+    if (ldap_initialize(&ldapconnection, ldaphost) != LDAP_SUCCESS)
+      ldapconnection = NULL;
+#endif
+  }
   if (ldapconnection == NULL)
-    return "Error opening LDAP connection";
-  //set options on connection blocks to specify LDAP version 3
+    return "Unable initialize LDAP connection";
+  //set options on connection to specify LDAP version 3
   //ldapconnection->ld_lberoptions = 0;
-  LDAPRESULTTYPE version = LDAP_VERSION3;
-  ldap_set_option(ldapconnection, LDAP_OPT_PROTOCOL_VERSION, &version);
-  //ldap_set_option(ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON);
+  LDAPRESULTTYPE opt = LDAP_VERSION3;
+  ldap_set_option(ldapconnection, LDAP_OPT_PROTOCOL_VERSION, &opt);
+  /////TO DO: LDAP_OPT_NETWORK_TIMEOUT
+  /////TO DO: LDAP_OPT_X_TLS_REQUIRE_CERT
+  /////TO DO: LDAP_OPT_X_TLS_CACERTFILE
+  /////TO DO: equivalent of environment variable LDAPTLS_REQCERT=never
+/*
+  if (ldapsecure) {
+    opt = LDAP_OPT_X_TLS_NEVER;
+    //opt = LDAP_OPT_X_TLS_DEMAND;
+    ldap_set_option(ldapconnection, LDAP_OPT_X_TLS_REQUIRE_CERT, &opt;
+  }
+*/
+  //enable SSL if needed
+/**/
+  if (ldapsecure) {
+    LDAPRESULTTYPE sslopt = 01;
+    if (ldap_get_option(ldapconnection, LDAP_OPT_SSL, (void*)&sslopt) == LDAP_SUCCESS && (void*)(intptr_t)sslopt == LDAP_OPT_OFF) {
+      printf("_____No_SSL_____\n");
+      if (ldap_set_option(ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON) != LDAP_SUCCESS)
+        printf("ERROR\n");
+      if (ldap_get_option(ldapconnection, LDAP_OPT_SSL, (void*)&sslopt) == LDAP_SUCCESS && (void*)(intptr_t)sslopt == LDAP_OPT_OFF) {
+        printf("_____Still_No_SSL_____\n");
+      }
+    } else {
+      printf("_____SSL_____\n");
+    }
+  }
+/**/
+/*
+  //connect (not needed and only supported on Windows
+#ifdef USE_WINLDAP
+  if ((msgid = ldap_connect(ldapconnection, NULL)) != LDAP_SUCCESS) {
+    const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
+    Close();
+    return (errmsg ? errmsg : "Unable to connect to LDAP server");
+  }
+#endif
+*/
+/**/
+  if (ldapsecure) {
+#ifdef USE_WINLDAP
+    if ((msgid = WINAPIASCII(ldap_start_tls_s)(ldapconnection, NULL, NULL, NULL, NULL)) != LDAP_SUCCESS) {
+#else
+    if ((msgid = WINAPIASCII(ldap_start_tls_s)(ldapconnection, NULL, NULL)) != LDAP_SUCCESS) {
+#endif
+      const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
+/*
+#ifndef USE_WINLDAP
+      const char* diagmsg;
+      ldap_get_option(ldapconnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, (void*)&diagmsg);
+      fprintf(stderr, "ldap_start_tls_s(): %s\n", diagmsg);
+      ldap_memfree(diagmsg);
+#endif
+*/
+      Close();
+      return (errmsg ? errmsg : "Unable to enable TLS security on LDAP connection");
+    }
+  }
+/**/
   //bind using specified or current credentials
   if (ldapuser || ldappass)
     msgid = WINAPIASCII(ldap_simple_bind_s)(ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : "")); //to do: replace with ldap_sasl_bind_s
@@ -194,13 +258,13 @@ const char* LDAPConnection::Open ()
   if (msgid != LDAP_SUCCESS) {
     const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
     Close();
-    return (errmsg ? errmsg : "Error binding LDAP");
+    return (errmsg ? errmsg : "Unable to bind LDAP credentials");
   }
   //get default search base if not supplied
   if (!ldapsearchbase) {
     LDAPMessage* response;
     static char* baseattrs[] = {(char*)"defaultNamingContext", NULL};
-    if (WINAPIASCII(ldap_search_ext_s)(ldapconnection, NULL, LDAP_SCOPE_BASE, NULL, baseattrs, 0, NULL, NULL, NULL, 0, &response) == LDAP_SUCCESS) {
+    if ((msgid = WINAPIASCII(ldap_search_ext_s)(ldapconnection, NULL, LDAP_SCOPE_BASE, NULL, baseattrs, 0, NULL, NULL, NULL, 0, &response)) == LDAP_SUCCESS) {
       char** values;
       if ((values = WINAPIASCII(ldap_get_values)(ldapconnection, response, (char*)"defaultNamingContext")) != NULL) {
         if (*values)
@@ -209,8 +273,9 @@ const char* LDAPConnection::Open ()
       }
     }
     if (!ldapsearchbase) {
+      const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
       Close();
-      return "Error getting default naming context from LDAP";
+      return (errmsg ? errmsg : "Unable to get default naming context from LDAP");
     }
   }
   return NULL;

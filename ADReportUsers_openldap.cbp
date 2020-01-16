@@ -57,7 +57,7 @@
 				<Option object_output="obj/Debug64/" />
 				<Option type="1" />
 				<Option compiler="mingw64" />
-				<Option parameters="/h 127.0.0.1:389 /f TSV /e" />
+				<Option parameters="/h 10.32.1.11 /f TSV /e" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>

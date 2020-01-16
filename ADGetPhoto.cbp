@@ -85,14 +85,12 @@
 		<Linker>
 			<Add option="-static" />
 			<Add library="wldap32" />
+			<Add library="crypt32" />
 		</Linker>
 		<Unit filename="ADGetPhoto.cpp" />
 		<Unit filename="ldapconnection.cpp" />
 		<Unit filename="ldapconnection.h" />
 		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
 			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>

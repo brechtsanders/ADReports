@@ -10,6 +10,7 @@
 #endif
 #ifdef USE_WINLDAP
 #include <winber.h>
+#include <wincrypt.h>           //only needed for CertFreeCertificateContext
 #else
 #include <unistd.h>             //needed for getlogin_r
 #ifndef _WIN32
@@ -105,6 +106,14 @@ char* get_current_login ()
 #endif
 }
 
+#ifdef USE_WINLDAP
+BOOLEAN winldap_verify_server_certificate (LDAP* ldapconnection, PCCERT_CONTEXT* server_certificate)
+{
+  CertFreeCertificateContext(*server_certificate);
+  return TRUE;
+}
+#endif
+
 LDAPConnection::LDAPConnection ()
 : ldaphost (NULL), ldapsecure(0), ldapuser(NULL), ldappass(NULL), ldapsearchbase(NULL), ldapconnection(NULL)/*, ldapresponse(NULL)*/
 {
@@ -175,6 +184,7 @@ const char* LDAPConnection::Open ()
 {
   LDAPRESULTTYPE msgid;
   //connect to default LDAP server
+  //see also cldap_open() for UDP connection
   if (!ldapsecure) {
     ldapconnection = WINAPIASCII(ldap_init)(ldaphost, LDAP_PORT);
   } else {
@@ -203,22 +213,32 @@ const char* LDAPConnection::Open ()
     ldap_set_option(ldapconnection, LDAP_OPT_X_TLS_REQUIRE_CERT, &opt;
   }
 */
+/*
+  //automatically reconnect
+  ldap_set_option(ldapconnection, LDAP_OPT_AUTO_RECONNECT, LDAP_OPT_ON);
+*/
   //enable SSL if needed
-/**/
   if (ldapsecure) {
-    LDAPRESULTTYPE sslopt = 01;
+#ifdef USE_WINLDAP
+    //register function to verify server certificate
+    msgid = ldap_set_option(ldapconnection, LDAP_OPT_SERVER_CERTIFICATE, (void*)&winldap_verify_server_certificate);
+#endif
+/*
+    LDAPRESULTTYPE sslopt = 0;
     if (ldap_get_option(ldapconnection, LDAP_OPT_SSL, (void*)&sslopt) == LDAP_SUCCESS && (void*)(intptr_t)sslopt == LDAP_OPT_OFF) {
       printf("_____No_SSL_____\n");
-      if (ldap_set_option(ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON) != LDAP_SUCCESS)
-        printf("ERROR\n");
+      if ((msgid = ldap_set_option(ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON)) != LDAP_SUCCESS) {
+        const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
+        printf("ERROR: %s\n", errmsg);
+      }
       if (ldap_get_option(ldapconnection, LDAP_OPT_SSL, (void*)&sslopt) == LDAP_SUCCESS && (void*)(intptr_t)sslopt == LDAP_OPT_OFF) {
         printf("_____Still_No_SSL_____\n");
       }
     } else {
       printf("_____SSL_____\n");
     }
+*/
   }
-/**/
 /*
   //connect (not needed and only supported on Windows
 #ifdef USE_WINLDAP
@@ -255,6 +275,7 @@ const char* LDAPConnection::Open ()
     msgid = WINAPIASCII(ldap_simple_bind_s)(ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : "")); //to do: replace with ldap_sasl_bind_s
   else
     msgid = WINAPIASCII(ldap_bind_s)(ldapconnection, NULL, NULL, LDAP_AUTH_NEGOTIATE);
+  //struct berval *server_cred = NULL;   msgid = WINAPIASCII(ldap_sasl_bind_s)(ldapconnection, NULL, LDAP_SASL_SIMPLE, NULL, NULL, NULL, &s_cred);
   if (msgid != LDAP_SUCCESS) {
     const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
     Close();

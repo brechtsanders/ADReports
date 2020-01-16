@@ -57,7 +57,7 @@
 				<Option object_output="obj/Debug64/" />
 				<Option type="1" />
 				<Option compiler="mingw64" />
-				<Option parameters="/h 127.0.0.1:389 /f TSV /e" />
+				<Option parameters="/h 10.32.1.11 /s /f TSV /e" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -87,6 +87,7 @@
 		<Linker>
 			<Add option="-static" />
 			<Add library="wldap32" />
+			<Add library="crypt32" />
 			<Add library="xlsxio_write" />
 			<Add library="minizip" />
 			<Add library="z" />

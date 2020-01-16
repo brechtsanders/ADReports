@@ -86,20 +86,17 @@
 		<Linker>
 			<Add option="-static" />
 			<Add library="wldap32" />
+			<Add library="crypt32" />
 			<Add library="xlsxio_write" />
 			<Add library="minizip" />
 			<Add library="z" />
 		</Linker>
+		<Unit filename="CheckUserFolders.cpp" />
 		<Unit filename="adformats.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="CheckUserFolders.cpp" />
 		<Unit filename="dataoutput.cpp" />
 		<Unit filename="ldapconnection.cpp" />
-		<Extensions>
-			<code_completion />
-			<debugger />
-			<envvars />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

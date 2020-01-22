@@ -11,11 +11,20 @@
 #endif
 #endif
 
-#define LDAP_COMMAND_LINE_PARAMETERS "[-h host[:port]] [-s] [-u user -p password] [-b searchbase] [-l user]"
+#ifdef USE_WINLDAP
+#define LDAP_SHORT_HELP_ENCRYPTION "[-s] "
+//#define LDAP_LONG_HELP_ENCRYPTION  "  -s             \tUse SSL encryption for the LDAP communication\n"
+#define LDAP_LONG_HELP_ENCRYPTION  "  -s             \tUse TLS encryption for the LDAP communication\n"
+#else
+#define LDAP_SHORT_HELP_ENCRYPTION ""
+#define LDAP_LONG_HELP_ENCRYPTION  ""
+#endif
+
+#define LDAP_COMMAND_LINE_PARAMETERS "[-h host[:port]] " LDAP_SHORT_HELP_ENCRYPTION "[-u user -p password] [-b searchbase] [-l user]"
 #define LDAP_COMMAND_LINE_HELP \
     "  -h host[:port] \tLDAP host (and optionally port) to connect to (default\n" \
     "                 \tis the default Active Directory LDAP server)\n" \
-    "  -s             \tUse SSL encryption for the LDAP communication\n" \
+    LDAP_LONG_HELP_ENCRYPTION \
     "  -u user        \tLDAP authentication user login (default is to\n" \
     "                 \tauthenticate as the currently logged on domain user)\n" \
     "  -p password    \tLDAP authentication password (default is to\n" \
@@ -30,6 +39,7 @@ class LDAPConnection
  protected:
   friend class LDAPResponse;
   char* ldaphost;
+  unsigned int ldapport;
   int ldapsecure;
   char* ldapuser;
   char* ldappass;

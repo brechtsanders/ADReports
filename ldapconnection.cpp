@@ -109,13 +109,18 @@ char* get_current_login ()
 #ifdef USE_WINLDAP
 BOOLEAN winldap_verify_server_certificate (LDAP* ldapconnection, PCCERT_CONTEXT* server_certificate)
 {
+  //don't verify server certificate
   CertFreeCertificateContext(*server_certificate);
   return TRUE;
 }
 #endif
 
+#define LDAP_SECURITY_NONE 0
+#define LDAP_SECURITY_SSL  1
+#define LDAP_SECURITY_TLS  2
+
 LDAPConnection::LDAPConnection ()
-: ldaphost (NULL), ldapsecure(0), ldapuser(NULL), ldappass(NULL), ldapsearchbase(NULL), ldapconnection(NULL)/*, ldapresponse(NULL)*/
+: ldaphost (NULL), ldapport(0), ldapsecure(LDAP_SECURITY_NONE), ldapuser(NULL), ldappass(NULL), ldapsearchbase(NULL), ldapconnection(NULL)/*, ldapresponse(NULL)*/
 {
 }
 
@@ -145,9 +150,12 @@ bool LDAPConnection::ProcessCommandLineParameter (int argc, char** argv, int& in
         return false;
       ldaphost = strdup(param);
       return true;
+#ifdef USE_WINLDAP
     case 's' :
-      ldapsecure = 1;
+      //ldapsecure = LDAP_SECURITY_SSL;
+      ldapsecure = LDAP_SECURITY_TLS;
       return true;
+#endif
     case 'u' :
       if (argv[index][2])
         param = argv[index] + 2;
@@ -180,107 +188,93 @@ bool LDAPConnection::ProcessCommandLineParameter (int argc, char** argv, int& in
   }
 }
 
+#define LDAP_FN_(f, ...) \
+  { \
+    LDAPRESULTTYPE resultcode; \
+    if ((resultcode = f(__VA_ARGS__)) != LDAP_SUCCESS) { \
+      const char* errmsg = WINAPIASCII(ldap_err2string)(resultcode); \
+      Close(); \
+      if (errmsg) \
+        return errmsg; \
+      else \
+        return "Error in " #f "()"; \
+    } \
+  }
+#define LDAP_FN(f, ...) LDAP_FN_(f, __VA_ARGS__)
+
 const char* LDAPConnection::Open ()
 {
   LDAPRESULTTYPE msgid;
   //connect to default LDAP server
   //see also cldap_open() for UDP connection
-  if (!ldapsecure) {
-    ldapconnection = WINAPIASCII(ldap_init)(ldaphost, LDAP_PORT);
-  } else {
 #ifdef USE_WINLDAP
-    ldapconnection = WINAPIASCII(ldap_sslinit)(ldaphost, LDAP_SSL_PORT, 1);
+  ldapconnection = WINAPIASCII(ldap_sslinit)(ldaphost, (ldapport ? ldapport : (ldapsecure == LDAP_SECURITY_SSL ? LDAP_SSL_PORT : LDAP_PORT)), (ldapsecure == LDAP_SECURITY_SSL ? 1 : 0));
 #else
-    //ldapconnection = WINAPIASCII(ldap_sslinit)(ldaphost, LDAPS_PORT, 1);
-    if (ldap_initialize(&ldapconnection, ldaphost) != LDAP_SUCCESS)
-      ldapconnection = NULL;
+  ldapconnection = ldap_init(ldaphost, (ldapport ? ldapport : (ldapsecure == LDAP_SECURITY_SSL ? LDAPS_PORT : LDAP_PORT)));
 #endif
-  }
   if (ldapconnection == NULL)
     return "Unable initialize LDAP connection";
-  //set options on connection to specify LDAP version 3
+
+  //specify LDAP version 3
   //ldapconnection->ld_lberoptions = 0;
   LDAPRESULTTYPE opt = LDAP_VERSION3;
-  ldap_set_option(ldapconnection, LDAP_OPT_PROTOCOL_VERSION, &opt);
-  /////TO DO: LDAP_OPT_NETWORK_TIMEOUT
-  /////TO DO: LDAP_OPT_X_TLS_REQUIRE_CERT
-  /////TO DO: LDAP_OPT_X_TLS_CACERTFILE
-  /////TO DO: equivalent of environment variable LDAPTLS_REQCERT=never
-/*
-  if (ldapsecure) {
-    opt = LDAP_OPT_X_TLS_NEVER;
-    //opt = LDAP_OPT_X_TLS_DEMAND;
-    ldap_set_option(ldapconnection, LDAP_OPT_X_TLS_REQUIRE_CERT, &opt;
-  }
-*/
-/*
+  LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_PROTOCOL_VERSION, &opt)
+
+  //enable encrypted connection if requested
+  if (ldapsecure != LDAP_SECURITY_NONE) {
+#ifdef USE_WINLDAP
   //automatically reconnect
-  ldap_set_option(ldapconnection, LDAP_OPT_AUTO_RECONNECT, LDAP_OPT_ON);
-*/
-  //enable SSL if needed
-  if (ldapsecure) {
-#ifdef USE_WINLDAP
+    LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_AUTO_RECONNECT, LDAP_OPT_ON)
     //register function to verify server certificate
-    msgid = ldap_set_option(ldapconnection, LDAP_OPT_SERVER_CERTIFICATE, (void*)&winldap_verify_server_certificate);
-#endif
-/*
-    LDAPRESULTTYPE sslopt = 0;
-    if (ldap_get_option(ldapconnection, LDAP_OPT_SSL, (void*)&sslopt) == LDAP_SUCCESS && (void*)(intptr_t)sslopt == LDAP_OPT_OFF) {
-      printf("_____No_SSL_____\n");
-      if ((msgid = ldap_set_option(ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON)) != LDAP_SUCCESS) {
-        const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
-        printf("ERROR: %s\n", errmsg);
-      }
-      if (ldap_get_option(ldapconnection, LDAP_OPT_SSL, (void*)&sslopt) == LDAP_SUCCESS && (void*)(intptr_t)sslopt == LDAP_OPT_OFF) {
-        printf("_____Still_No_SSL_____\n");
-      }
-    } else {
-      printf("_____SSL_____\n");
-    }
-*/
-  }
-/*
-  //connect (not needed and only supported on Windows
-#ifdef USE_WINLDAP
-  if ((msgid = ldap_connect(ldapconnection, NULL)) != LDAP_SUCCESS) {
-    const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
-    Close();
-    return (errmsg ? errmsg : "Unable to connect to LDAP server");
-  }
-#endif
-*/
-/**/
-  if (ldapsecure) {
-#ifdef USE_WINLDAP
-    if ((msgid = WINAPIASCII(ldap_start_tls_s)(ldapconnection, NULL, NULL, NULL, NULL)) != LDAP_SUCCESS) {
+    LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_SERVER_CERTIFICATE, (void*)&winldap_verify_server_certificate);
 #else
-    if ((msgid = WINAPIASCII(ldap_start_tls_s)(ldapconnection, NULL, NULL)) != LDAP_SUCCESS) {
+    opt = LDAP_OPT_X_TLS_HARD;
+    LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_X_TLS, &opt)
+    //LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_X_TLS, LDAP_OPT_ON)
+    //configure TLS security as requested
+    //opt = (ldapsecure == LDAP_SECURITY_TLS ? LDAP_OPT_X_TLS_DEMAND : LDAP_OPT_X_TLS_NEVER);
+    opt = LDAP_OPT_X_TLS_ALLOW;
+    LDAP_FN(ldap_set_option, NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &opt)
+    LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_X_TLS_REQUIRE_CERT, &opt)
+
+    opt = 0;
+    LDAP_FN(ldap_set_option, NULL, LDAP_OPT_X_TLS_NEWCTX, &opt)
+    //don't perform CRL validation
+    //opt = LDAP_OPT_X_TLS_CRL_NONE;
+    //LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_X_TLS_CRLCHECK, &opt)
+    //set CA certificate
+    //LDAP_FN(ldap_set_option, NULL, LDAP_OPT_X_TLS_CACERTFILE, NULL)
+    //LDAP_FN(ldap_start_tls_s, ldapconnection, NULL, NULL);
+    if (ldapsecure == LDAP_SECURITY_SSL) {
+      //LDAP_FN(ldap_set_option, ldapconnection, LDAP_OPT_SSL, LDAP_OPT_ON)
+      //LDAP_FN(ldap_install_tls, ldapconnection)
+    } else
 #endif
-      const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
-/*
-#ifndef USE_WINLDAP
-      const char* diagmsg;
-      ldap_get_option(ldapconnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, (void*)&diagmsg);
-      fprintf(stderr, "ldap_start_tls_s(): %s\n", diagmsg);
-      ldap_memfree(diagmsg);
+    if (ldapsecure == LDAP_SECURITY_TLS) {
+#ifdef USE_WINLDAP
+      LDAP_FN(ldap_start_tls_s, ldapconnection, NULL, NULL, NULL, NULL)
+#else
+      LDAP_FN(ldap_start_tls_s, ldapconnection, NULL, NULL)
 #endif
-*/
-      Close();
-      return (errmsg ? errmsg : "Unable to enable TLS security on LDAP connection");
     }
   }
-/**/
+
+/*
+  //connect (not needed and only supported on Windows)
+#ifdef USE_WINLDAP
+  LDAP_FN(ldap_connect, ldapconnection, NULL)
+#endif
+*/
+
   //bind using specified or current credentials
-  if (ldapuser || ldappass)
-    msgid = WINAPIASCII(ldap_simple_bind_s)(ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : "")); //to do: replace with ldap_sasl_bind_s
-  else
-    msgid = WINAPIASCII(ldap_bind_s)(ldapconnection, NULL, NULL, LDAP_AUTH_NEGOTIATE);
-  //struct berval *server_cred = NULL;   msgid = WINAPIASCII(ldap_sasl_bind_s)(ldapconnection, NULL, LDAP_SASL_SIMPLE, NULL, NULL, NULL, &s_cred);
-  if (msgid != LDAP_SUCCESS) {
-    const char* errmsg = WINAPIASCII(ldap_err2string)(msgid);
-    Close();
-    return (errmsg ? errmsg : "Unable to bind LDAP credentials");
+  if (ldapuser || ldappass) {
+    //LDAP_FN(WINAPIASCII(ldap_simple_bind_s), ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : "")); //to do: replace with ldap_sasl_bind_s
+    LDAP_FN(WINAPIASCII(ldap_simple_bind_s), ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : "")) //to do: replace with ldap_sasl_bind_s
+    //LDAP_FN(WINAPIASCII(ldap_sasl_bind_s), ldapconnection, (char*)(ldapuser ? ldapuser : ""), (char*)(ldappass ? ldappass : ""));
+  } else {
+    LDAP_FN(WINAPIASCII(ldap_bind_s), ldapconnection, NULL, NULL, LDAP_AUTH_NEGOTIATE)
   }
+
   //get default search base if not supplied
   if (!ldapsearchbase) {
     LDAPMessage* response;

@@ -33,6 +33,15 @@ RMDIR = rm -rf
 CP = cp -f
 CPDIR = cp -rf
 
+OSALIAS := $(OS)
+ifeq ($(OS),Windows_NT)
+ifneq (,$(findstring x86_64,$(shell gcc --version)))
+OSALIAS := win64
+else
+OSALIAS := win32
+endif
+endif
+
 ifdef STATIC
 CFLAGS += -DSTATIC
 CXXFLAGS += -DSTATIC
@@ -54,7 +63,7 @@ LDAP_LIBS := -lldap -llber
 ifeq ($(OS),Windows_NT)
 ifdef USE_WINLDAP
 LDAP_FLAGS := -DUNICODE -DUSE_WINLDAP
-LDAP_LIBS := -lwldap32
+LDAP_LIBS := -lwldap32 -lcrypt32
 endif
 endif
 
@@ -158,9 +167,9 @@ package: version
 .PHONY: package
 binarypackage: version
 	#$(MAKE) PREFIX=binarypackage_temp install USE_XLSXIO=1 USE_WINLDAP=1 STATIC=1
-	#tar cfJ "adreports-$(shell cat version)-$(OS).tar.xz" --transform="s?^binarypackage_temp/??" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
+	#tar cfJ "adreports-$(shell cat version)-$(OSALIAS).tar.xz" --transform="s?^binarypackage_temp/??" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
 	$(MAKE) PREFIX=binarypackage_temp install USE_XLSXIO=1 USE_WINLDAP=1 STATIC=1
-	zip -9 -r -j "adreports-$(shell cat version)-$(OS).zip" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
+	zip -9 -r -j "adreports-$(shell cat version)-$(OSALIAS).zip" $(COMMON_PACKAGE_FILES) binarypackage_temp/*
 	rm -rf binarypackage_temp
 
 .PHONY: clean

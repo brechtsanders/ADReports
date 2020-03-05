@@ -1,6 +1,3 @@
-2020-03-05 - version 1.4.6
- - added -n option to ADReportGroups to show number of members and enables members
-
 2020-01-22 - version 1.4.5
  - added -s option to use TLS ecncryption on the LDAP connection
  - changed ADReportGroups parameter to list security groups only from -s to -g

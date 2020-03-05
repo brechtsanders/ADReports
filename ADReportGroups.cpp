@@ -26,6 +26,7 @@ void show_help()
     "                 \tspecified multiple times, default is all groups)\n" \
     "  -g             \tSecurity groups only\n" \
     "  -d             \tDistribution groups only\n" \
+    "  -n             \tGet count of members and enabled members in each group (can be slow)\n" \
     "  -c days        \tShow only groups created in the last number of days\n" \
     "  -q ldapfilter  \tLDAP filter\n" \
     "\n"
@@ -39,6 +40,7 @@ int main (int argc, char *argv[])
   std::vector<std::string> users;
   bool securitygroupsonly = false;
   bool distributiongroupsonly = false;
+  bool addcounter = false;
   int createdlastdays = -1;
   std::string ldapfilter;
   LDAPConnection* ldap = new LDAPConnection;
@@ -92,6 +94,9 @@ int main (int argc, char *argv[])
             break;
           case 'd' :
             distributiongroupsonly = true;
+            break;
+          case 'n' :
+            addcounter = true;
             break;
           case 'c' :
             if (argv[i][2])
@@ -186,6 +191,10 @@ int main (int argc, char *argv[])
     dst->AddColumn("ADName", 128);
     dst->AddColumn("Description", 48);
     dst->AddColumn("PrimaryEmail", 48);
+    if (addcounter) {
+      dst->AddColumn("MemberCount", 5);
+      dst->AddColumn("EnabledMemberCount", 5);
+    }
     if (result->Rewind()) {
       char* s;
       std::string type;
@@ -221,6 +230,34 @@ int main (int argc, char *argv[])
         free(s);
         dst->AddData(get_primary_smtp_address(s = result->GetAttribute("proxyAddresses")));
         free(s);
+        if (addcounter) {
+          LDAPResponse* subresult;
+          std::string subsearchfilter = "(&";
+          s = result->GetDN();
+          subsearchfilter += "(memberOf:1.2.840.113556.1.4.1941:=";
+          subsearchfilter += s;
+          subsearchfilter += ")";
+          free(s);
+          subsearchfilter += ")";
+          if ((subresult = ldap->Search(subsearchfilter.c_str())) == NULL) {
+            dst->AddData("ERROR");
+          } else {
+            long long accountctrl;
+            int64_t countmembers = 0;
+            int64_t countenabledmembers = 0;
+            if (subresult->Rewind()) {
+              do {
+                countmembers++;
+                accountctrl = subresult->GetAttributeInt("userAccountControl");
+                if ((accountctrl & UF_ACCOUNTDISABLE) == 0)
+                  countenabledmembers++;
+              } while (subresult->Next());
+              delete subresult;
+            }
+            dst->AddData(countmembers);
+            dst->AddData(countenabledmembers);
+          }
+        }
       } while (result->Next());
     }
     delete result;

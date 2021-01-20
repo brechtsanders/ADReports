@@ -1,10 +1,5 @@
 #include <stdio.h>
 #include <ctype.h>
-#ifdef _WIN32
-#include <windows.h>
-#include <lmaccess.h>
-#else
-#endif
 #include <string>
 #include <vector>
 #include "adreports_version.h"

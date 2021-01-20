@@ -4,8 +4,12 @@
 #if USE_WINLDAP
 #include <windows.h>
 #include <winldap.h>
+#include <lmaccess.h>
 #else
 #include <ldap.h>
+#define UF_ACCOUNTDISABLE 2
+#define UF_LOCKOUT 16
+#define UF_DONT_EXPIRE_PASSWD 65536
 #ifndef NO_PAGED_LDAP
 #define NO_PAGED_LDAP
 #endif

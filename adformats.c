@@ -2,12 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#ifdef __MINGW32__
-#define PRINTF_INT64_MODIFIER "I64"
-#else
-#define PRINTF_INT64_MODIFIER "ll"
-#endif
+#include <stdint.h>
+#include <inttypes.h>
 
 const char* format_time (time_t timestamp)
 {
@@ -90,7 +86,7 @@ const char* time2timevalue (time_t timestamp)
 //#ifdef _WIN32
 //  lltoa(time2timevalue_n(timestamp), buf, 10);
 //#else
-  snprintf(buf, sizeof(buf), "%" PRINTF_INT64_MODIFIER "i", time2timevalue_n(timestamp));
+  snprintf(buf, sizeof(buf), "%" PRIi64, time2timevalue_n(timestamp));
 //#endif
   return buf;
 }

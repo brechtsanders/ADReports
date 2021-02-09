@@ -77,11 +77,11 @@ ADReportUsers -f HTML -o NotRecentlyLoggedIn.html -l -45 -e
 ```
 ADReportUsers -f XML -o DeleteMe.xml -b "OU=DeleteMe,OU=Company,DC=DOMAIN,DC=LOCAL"
 ```
-- Create TSV (Tab Seperated Values) file with report containing enabled all users that have "password never expires" enabled using a custom LDAP query:
+- Create TSV (Tab Separated Values) file with report containing enabled all users that have "password never expires" enabled using a custom LDAP query:
 ```
 ADReportUsers -f TSV -o AccountNeverExpires.txt -e -q "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536))"
 ```
-- Show list of enabled users whe are currently locked out on console in TSV (Tab Seperated Values) format:
+- Show list in TSV (Tab Separated Values) format of enabled users whose password is currently locked out:
 ```
 ADReportUsers -f TSV -e -q "lockoutTime>0"
 ```

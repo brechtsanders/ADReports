@@ -81,6 +81,10 @@ ADReportUsers -f XML -o DeleteMe.xml -b "OU=DeleteMe,OU=Company,DC=DOMAIN,DC=LOC
 ```
 ADReportUsers -f TSV -o AccountNeverExpires.txt -e -q "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536))"
 ```
+- Show list of enabled users whe are currently locked out on console in TSV (Tab Seperated Values) format:
+```
+ADReportUsers -f TSV -e -q "lockoutTime>0"
+```
 
 License
 -------

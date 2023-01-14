@@ -13,8 +13,8 @@
 #include <wincrypt.h>           //only needed for CertFreeCertificateContext
 #else
 #include <unistd.h>             //needed for getlogin_r
-#ifdef __linux__
-#include <bits/local_lim.h>     //needed for LOGIN_NAME_MAX
+#ifndef _WIN32
+#include <limits.h>     //needed for LOGIN_NAME_MAX
 #endif
 #include <lber.h>
 #endif

@@ -1,6 +1,7 @@
 2023-01-14 - version 1.4.9
  - add GitHub Actions CI (Windows 32-bit, Windows 64-bit, Ubuntu Linux, macOS)
- - don't include bits/local_lim.h on macOS
+ - ldapconnection.cpp: include limits.h instead of bits/local_lim.h
+ - ldapconnection.cpp: fix undefined LOGIN_NAME_MAX on macOS
 
 2023-01-14 - version 1.4.8
  - fixes issues in ADReportUsers.cpp: can't return false in main()

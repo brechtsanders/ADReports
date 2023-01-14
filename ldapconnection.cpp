@@ -14,7 +14,10 @@
 #else
 #include <unistd.h>             //needed for getlogin_r
 #ifndef _WIN32
-#include <limits.h>     //needed for LOGIN_NAME_MAX
+#include <limits.h>             //needed for LOGIN_NAME_MAX
+#ifndef LOGIN_NAME_MAX
+#define LOGIN_NAME_MAX 64
+#endif
 #endif
 #include <lber.h>
 #endif

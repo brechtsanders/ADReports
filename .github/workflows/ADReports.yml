@@ -1,0 +1,107 @@
+name: GitHub-CI for ADReports
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false          # if a job fails don't abort other jobs
+      matrix:
+        config:
+          - {
+              name: "Windows 64-bit (gcc)",
+              os: windows-latest,
+              shell: 'msys2 {0}',
+              msystem: MINGW64,
+              arch: x86_64,
+              cc: x86_64-w64-mingw32-gcc.exe,
+              cxx: x86_64-w64-mingw32-g++.exe,
+              makeflags: "USE_WINLDAP=1 USE_XLSXIO=1"
+            }
+          - {
+              name: "Windows 32-bit (gcc)",
+              os: windows-latest,
+              shell: 'msys2 {0}',
+              msystem: MINGW32,
+              arch: i686,
+              cc: i686-w64-mingw32-gcc.exe,
+              cxx: i686-w64-mingw32-g++.exe,
+              makeflags: "USE_WINLDAP=1 USE_XLSXIO=1"
+            }
+          - {
+              name: "Ubuntu Linux (clang)",
+              os: ubuntu-latest,
+              shell: bash,
+              arch: x86_64,
+              cc: clang,
+              cxx: clang++,
+              makeflags: ""
+            }
+          - {
+              name: "macOS (clang)",
+              os: macos-latest,
+              shell: bash,
+              arch: x86_64,
+              cc: clang,
+              cxx: clang++,
+              makeflags: ""
+            }
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.config.shell }}
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+      MAKEFLAGS: ${{ matrix.config.makeflags }}
+
+    steps:
+    - if: matrix.config.os == 'windows-latest'
+      name: Install build dependencies (Windows/MSYS)
+      uses: msys2/setup-msys2@v2
+      with:
+        update: false
+        msystem: ${{ matrix.config.msystem }}
+        install: >-
+          make
+          pkg-config
+          mingw-w64-${{ matrix.config.arch }}-toolchain
+          mingw-w64-${{ matrix.config.arch }}-xlsxio
+    - if: matrix.config.os == 'ubuntu-latest'
+      name: Install build dependencies (Linux)
+      run: |
+        sudo apt-get install \
+          make \
+          pkg-config \
+          libldap2-dev
+    - if: matrix.config.os == 'macos-latest'
+      name: Install build dependencies (macOS)
+      run: |
+        brew install \
+          openldap
+    - name: Check out source code
+      uses: actions/checkout@v1
+    - name: Build
+      run: |
+        make install $MAKEFLAGS \
+         PREFIX=$PWD/release
+#    - if: matrix.config.os == 'windows-latest'
+#      name: Build package
+#      run: |
+#        PKG_CONFIG_PATH=$PWD/deps/lib/pkgconfig:/usr/local/opt/libarchive/lib/pkgconfig:$PKG_CONFIG_PATH \
+#         make binarypackage \
+#         STATIC=1 \
+#         CFLAGS="-I$PWD/deps/include -I/usr/local/opt/libarchive/include" \
+#         LDFLAGS="-L$PWD/deps/lib -L/usr/local/opt/libarchive/lib"
+#        mv winlibs-tools-*.zip winlibs-tools-${{ matrix.config.arch }}.zip
+#    - if: matrix.config.os == 'windows-latest'
+#      name: Upload package
+#      uses: actions/upload-artifact@v1
+#      with:
+#        path: ./release
+#        name: winlibs-tools-${{ matrix.config.arch }}.zip

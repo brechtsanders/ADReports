@@ -71,8 +71,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             dstformat = strdup(param);
             break;
           case 'o' :
@@ -80,8 +82,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             dstfilename = strdup(param);
             break;
           case 'g' :
@@ -89,8 +93,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             groups.push_back(param);
             break;
           case 'c' :
@@ -98,8 +104,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             createdlastdays = atoi(param);
             break;
           case 'x' :
@@ -107,8 +115,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             expiresnextdays = atoi(param);
             break;
           case 'l' :
@@ -116,8 +126,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             loggedonlastdays = atoi(param);
             break;
           case 'n' :
@@ -125,8 +137,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             changedpasswordlastdays = atoi(param);
             break;
           case 'e' :
@@ -143,8 +157,10 @@ int main (int argc, char *argv[])
               param = argv[i] + 2;
             else if (i + 1 < argc && argv[i + 1])
               param = argv[++i];
-            if (!param)
-              return false;
+            if (!param) {
+              paramerror = true;
+              break;
+	    }
             ldapfilter = param;
             break;
           default :

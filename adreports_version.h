@@ -10,7 +10,7 @@
 /*! \brief minor version number */
 #define ADREPORTS_VERSION_MINOR 4
 /*! \brief micro version number */
-#define ADREPORTS_VERSION_MICRO 7
+#define ADREPORTS_VERSION_MICRO 8
 /*! @} */
 
 /*! \cond PRIVATE */
@@ -22,6 +22,6 @@
 #define ADREPORTS_VERSION_STRING ADREPORTS_VERSION_STRINGIZE(ADREPORTS_VERSION_MAJOR, ADREPORTS_VERSION_MINOR, ADREPORTS_VERSION_MICRO)
 
 /*! \brief string with information about author \hideinitializer */
-#define ADREPORTS_CREDITS "Brecht Sanders 2011-2020"
+#define ADREPORTS_CREDITS "Brecht Sanders 2011-2023"
 
 #endif

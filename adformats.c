@@ -86,7 +86,7 @@ const char* time2timevalue (time_t timestamp)
 //#ifdef _WIN32
 //  lltoa(time2timevalue_n(timestamp), buf, 10);
 //#else
-  snprintf(buf, sizeof(buf), "%" PRIi64, time2timevalue_n(timestamp));
+  snprintf(buf, sizeof(buf), "%" PRIi64, (int64_t)time2timevalue_n(timestamp));
 //#endif
   return buf;
 }
